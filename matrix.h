@@ -98,10 +98,8 @@ class ParallelMatrix {
   void Save(const char* path, const char* file_name);
 
   // Load matrix chunks from "path" directory. If successfully loaded, return
-  // true, otherwise return false. If current number of processors is different
-  // from the number of processors when saving the matrix chunks, matrix chunks
-  // are merged together, and splitted into proper number of chunks, at last
-  // these chunks are loaded by function ReadChunks().
+  // true, otherwise return false. This function assumes that the number of
+  // processors is the same with the number of chunks.
   bool Load(const char* path, const char* file_name);
 
   // Loads matrix chunks files from directory "path", processor # will load

@@ -53,8 +53,8 @@ void SvmTrainer::TrainModel(const Document& doc, const Kernel& kernel,
       if (mpi->GetProcId() == 0) cout << "Performing ICF ... \t" << endl;
       Timer t1;
       t1.Start();
-      MatrixManipulation::ICF(doc, kernel, parameter, doc.GetGlobalNumberRows(),
-                              rank, &icf_result);
+      MatrixManipulation::ICF(doc, kernel, doc.GetGlobalNumberRows(),
+                              rank, parameter.threshold, &icf_result);
       t1.Stop();
       if (mpi->GetProcId() == 0)
         cout << "ICF completed in " << t1.total() << " seconds" << endl;
@@ -71,8 +71,8 @@ void SvmTrainer::TrainModel(const Document& doc, const Kernel& kernel,
     if (mpi->GetProcId() == 0) cout << "Performing ICF ... " << endl;
     Timer t1;
     t1.Start();
-    MatrixManipulation::ICF(doc, kernel, parameter, doc.GetGlobalNumberRows(),
-                            rank, &icf_result);
+    MatrixManipulation::ICF(doc, kernel, doc.GetGlobalNumberRows(),
+                            rank, parameter.threshold, &icf_result);
     t1.Stop();
     if (mpi->GetProcId() == 0) {
       cout << "ICF completed in " << t1.total() << " seconds" << endl;
@@ -348,6 +348,7 @@ int main(int argc, char** argv) {
   ipm_parameter.mu_factor = FLAGS_mu_factor;
   ipm_parameter.verb = FLAGS_verbose;
   ipm_parameter.save_interval = FLAGS_save_interval;
+  ipm_parameter.tradeoff = 0;
 
   // Begin timing
   TrainingTimeProfile::total.Start();

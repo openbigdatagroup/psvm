@@ -17,7 +17,7 @@ limitations under the License.
 #ifndef KERNEL_H__
 #define KERNEL_H__
 
-// Deals with kernel functions of kernel methods. Sample usage:
+// Class Kernel deals with kernel functions. Sample usage:
 //    Kernel kernel;
 //    kernel.SetKernelType(Kernel::GAUSSIAN);
 //    kernel.SetRbfGamma(2);

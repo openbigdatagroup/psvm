@@ -23,23 +23,55 @@ limitations under the License.
 
 using std::string;
 
+// This file define some IO interfaces to compatible with Google
+// IO specifications.
 namespace psvm {
 class File {
  public:
+  // Opens file "name" with flags specified by "flag"
   static File* Open(const char* name, const char* flag);
+
+  // Opens file "name" with flags specified by "flag"
+  // If open failed, program will exit.
   static File* OpenOrDie(const char* name, const char*  flag);
-  size_t ReadOrDie(void* buff, size_t size);
+
+  // Reads "size" bytes to buff from file, buff should be pre-allocated.
   size_t Read(void* buff, size_t size);
+
+  // Reads "size" bytes to buff from file, buff should be pre-allocated.
+  // If read failed, program will exit.
+  void ReadOrDie(void* buff, size_t size);
+
+  // Read a line from file.
   // Each line must be no more than 1000000 bytes
   bool ReadLine(string* line);
-  size_t WriteOrDie(const void* buff, size_t size);
+
+  // Writes "size" bytes of buff to file, buff should be pre-allocated.
   size_t Write(const void* buff, size_t size);
+
+  // Writes "size" bytes of buff to file, buff should be pre-allocated.
+  // If write failed, program will exit.
+  void WriteOrDie(const void* buff, size_t size);
+
+  // Write a string to file.
   size_t WriteString(const string& line);
+
+  // Write a string to file and append a "\n".
   bool WriteLine(const string& line);
+
+  // Close the file.
   bool Close();
+
+  // Flush buffer.
   bool Flush();
+
+  // Return file size.
   size_t Size();
+
+  // Delete a file.
   static bool Delete(char* name);
+
+  // Test if a file exists.
   static bool Exists(char* name);
  protected:
   FILE* f_;

@@ -30,6 +30,9 @@ using namespace std;
 #define CHECK_LE(a, b)  \
                   if ((a) > (b)) { Log("Check failed: " #a " <= " #b " ",  __FILE__, __LINE__) ; exit(1);}
 
+#define CHECK_EQ(a, b)  \
+                  if ((a) == (b)) { Log("Check failed: " #a " == " #b " ",  __FILE__, __LINE__) ; exit(1);}
+
 
 namespace psvm {
 void Log(const string& msg, const string& file, int linenum);

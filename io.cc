@@ -46,16 +46,16 @@ bool File::Close() {
   return fclose(f_) == 0;
 }
 
-size_t File::ReadOrDie(void* buf, size_t size) {
-  return fread(buf, 1, size, f_);
+void File::ReadOrDie(void* buf, size_t size) {
+  CHECK_EQ(fread(buf, 1, size, f_), size);
 }
 
 size_t File::Read(void* buf, size_t size) {
   return fread(buf, 1, size, f_);
 }
 
-size_t File::WriteOrDie(const void* buf, size_t size) {
-  return fwrite(buf, 1, size, f_);
+void File::WriteOrDie(const void* buf, size_t size) {
+  CHECK_EQ(fwrite(buf, 1, size, f_), size);
 }
 size_t File::Write(const void* buf, size_t size) {
   return fwrite(buf, 1, size, f_);
@@ -94,11 +94,11 @@ bool File::ReadLine(string* line) {
 }
 
 size_t File::WriteString(const string& line) {
-  return WriteOrDie(line.c_str(), line.size());
+  return Write(line.c_str(), line.size());
 }
 
 bool File::WriteLine(const string& line) {
-  WriteOrDie(line.c_str(), line.size());
-  return WriteOrDie("\n", 1);
+  if (Write(line.c_str(), line.size()) != line.size()) return false;
+  return Write("\n", 1) == 1;
 }
 }

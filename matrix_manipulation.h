@@ -69,8 +69,7 @@ class MatrixManipulation {
   // obligation to free these memory blocks, which can be done in the
   // destructor of class ParallelMatrix.
   static void ICF(const Document &doc, const Kernel &kernel,
-                  const PrimalDualIPMParameter &parameter,
-                  int num_rows_added, int num_cols_added,
+                  int rows, int columns, double threshold,
                   ParallelMatrix *icf);
 
   // Computes l = h'*d*h where d is a diagonal matrix. h is parallel matrix and

@@ -115,8 +115,7 @@ void MatrixManipulation::FreePivotSample(Sample *pivot_sample,
 }
 
 void MatrixManipulation::ICF(const Document &doc, const Kernel& kernel,
-                             const PrimalDualIPMParameter &parameter,
-                             int rows, int columns,
+                             int rows, int columns, double threshold,
                              ParallelMatrix *icf) {
   CHECK(icf);
   ParallelInterface *mpi = ParallelInterface::GetParallelInterface();
@@ -152,7 +151,7 @@ void MatrixManipulation::ICF(const Document &doc, const Kernel& kernel,
                   MPI_COMM_WORLD);
 
     // Test stop criterion
-    if (global_trace < parameter.threshold) {
+    if (global_trace < threshold) {
       icf->SetNumCols(column);
       if (parallel_id == 0) {
         cout << "reset columns from " << columns

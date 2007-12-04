@@ -26,7 +26,7 @@ limitations under the License.
 namespace psvm {
 class ParallelInterface {
  public:
-  // Call InitAll before all other calls to initialize mpi interface.
+  // Call Init before all other calls to initialize mpi interface.
   void Init(int* argc, char*** argv);
 
   // A wrapper to call MPI_Finalize. It must be called at the end of program.

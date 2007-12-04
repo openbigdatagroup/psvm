@@ -32,7 +32,7 @@ using namespace std;
 namespace psvm {
 class ParallelInterface;
 
-// Stores the properties of a feature, including its word id and its weight.
+// Stores the properties of a feature, including id and weight.
 struct Feature {
   int id;
   double weight;
@@ -47,7 +47,7 @@ struct Sample {
   vector<Feature> features;
 };
 
-// See comment at top of file for a complete description
+// See comment at top of this file for more description
 class Document {
  public:
   Document();

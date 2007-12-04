@@ -118,8 +118,6 @@ void ParallelMatrix::Save(const char *path, const char* file_name) {
 
 // Load matrix from directory "path".
 // If no available matrix chunks, return false.
-// If the number of current processors differs from the number of chunks,
-// these chunks are merged together and splitted, and then is loaded.
 bool ParallelMatrix::Load(const char *path, const char* file_name) {
   ParallelInterface *mpi = ParallelInterface::GetParallelInterface();
   int num_procs = mpi->GetNumProcs();
@@ -174,7 +172,8 @@ bool ParallelMatrix::Load(const char *path, const char* file_name) {
     if (mpi->GetProcId() == 0) cout << "Reading trunks ... " << endl;
     return ReadChunks(path, file_name);
   } else {
-    cerr << "The number of processes used to predict is different from the number of processes used to train" << endl;
+    cerr << "The number of processes used to predict is different from"
+            "the number of processes used to train" << endl;
     exit(1);
     return false;
   }
