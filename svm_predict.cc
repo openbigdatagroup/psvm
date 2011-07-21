@@ -14,10 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
 #include <utility>
 #include <string>
-#include <stdlib.h>
-#include <stdio.h>
 #include <vector>
 #include "svm_predict.h"
 #include "document.h"
@@ -229,7 +230,7 @@ int FLAGS_batch_size = 10000;
 //=============================================================================
 
 void Usage() {
-  char* msg =
+  const char* msg =
       "svm_predict: This program predicts the class labels of samples. Usage:\n"
       "  svm_predict data_file\n"
       "The predict result is saved in data_file.predict.\n"

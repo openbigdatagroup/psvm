@@ -14,9 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+#include <cstring>
 #include <string>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 #include "svm_train.h"
 #include "timer.h"
 #include "common.h"
@@ -182,7 +183,7 @@ bool FLAGS_failsafe = false;
 //=============================================================================
 
 void Usage() {
-  char* msg =
+  const char* msg =
       "svm_train: This program does the SVM trainings on the training samples and "
       "generages a SVM model for futures prediction use. Usage:\n"
       "  svm_train data_file\n"

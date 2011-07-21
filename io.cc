@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 
+#include <cstring>
 #include <iostream>
 #include <sys/stat.h>
 #include <sys/types.h>

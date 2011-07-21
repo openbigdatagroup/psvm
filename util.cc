@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 #include "util.h"
+#include <cstring>
 #include <stdio.h>
 #include <ctype.h>
 

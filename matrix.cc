@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 #include <cmath>
+#include <cstring>
 
 #include "matrix.h"
 #include "document.h"
@@ -224,7 +225,7 @@ bool ParallelMatrix::ReadChunks(const char *path, const char* file_name) {
   int num_local_rows = mpi->ComputeNumLocal(num_rows);
   long long num_file_size = sizeof(num_procs) * 3 +
       num_local_rows * num_cols * sizeof(element_[0][0]);
-  if (file->Size() != num_file_size) {
+  if ((long long) file->Size() != num_file_size) {
     cout << "The size of matrix chunck file \""
               << filename
               << "\" is not correct!" << endl

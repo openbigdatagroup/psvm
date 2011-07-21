@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 #include <sys/time.h>
+#include <cstdio>
 #include <string>
 #include "timer.h"
 

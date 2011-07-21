@@ -14,8 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#include <float.h>
-
+#include <cfloat>
+#include <cstring>
 #include <vector>
 #include <cmath>
 #include <climits>
