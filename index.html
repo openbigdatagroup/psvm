@@ -2,7 +2,7 @@
 <html lang="en-us">
   <head>
     <meta charset="UTF-8">
-    <title>Psvm by obdg</title>
+    <title>PSVM by obdg</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
@@ -11,7 +11,7 @@
   </head>
   <body>
     <section class="page-header">
-      <h1 class="project-name">Psvm</h1>
+      <h1 class="project-name">PSVM</h1>
       <h2 class="project-tagline">Parallelizing Support Vector Machines on Distributed Computers</h2>
       <a href="https://github.com/obdg/psvm" class="btn">View on GitHub</a>
       <a href="https://github.com/obdg/psvm/zipball/master" class="btn">Download .zip</a>
@@ -19,34 +19,63 @@
     </section>
 
     <section class="main-content">
-      <p>It is the code of the following paper:
-<a href="http://books.nips.cc/papers/files/nips20/NIPS2007_0435.pdf">http://books.nips.cc/papers/files/nips20/NIPS2007_0435.pdf</a>. This is an all-kernel-support version of SVM, which can parallel run on multiple machines.</p>
+      <h1>Introduction</h1>
+      <p>This is the project of the following paper:
+<a href="http://books.nips.cc/papers/files/nips20/NIPS2007_0435.pdf">PSVM: Parallelizing Support Vector Machines on Distributed Computers</a>. It is an all-kernel-support version of SVM, which can parallel run on multiple machines.</p>
 
-<p>We migrate it from Google's large scale computing infrastructure to MPI, then every one can use and run it. Please notice this open source project is a 20% project (we do it in part time), and it is still in a Beta version. :)</p>
+<p>We migrate it from Google's large scale computing infrastructure to 
+MPI, then every one can use and run it. Please notice this open source 
+project is a 20% project (we do it in part time), and it is still in a 
+Beta version. :)</p>
 
-<p>If you wish to publish any work based on psvm, please cite our paper as:
-Edward Chang, Kaihua Zhu, Hao Wang, Hongjie Bai, Jian Li, Zhihuan Qiu, and Hang Cui, PSVM: Parallelizing Support Vector Machines on Distributed Computers. NIPS 2007. Software available at <a href="http://obdg.github.io/psvm">http://obdg.github.io/psvm</a>.</p>
+<p> Software available at <a href="http://obdg.github.io/psvm">https://github.com/obdg/psvm</a>.</p>
+
+<p>If you have any question, please feel free to contact us. And you can also ask your questions on: <a href="http://groups.google.com/group/psvm?lnk=srg">PSVM-users group</a></p>
+<h1>Why PSVM</h1>
+<p>Although widely used, Support Vector Machines (SVMs) suffer from a widely recognized sacalability problem in both memory use and computational time.</p>
+
+<p>PSVM achieves memory reduction and computation speedup via a row-based parallel Incomplete Cholesky Factorization (ICF) algorithm and parallel interior-Point Method(IPM).</p>
+
+<p>Empirical study shows that PSVM effectively speeds up training time for large-scale tasks while maintaining high training accuracy.</p>
+
+<p>Let <code>n</code> denote the number of training instances, <code>p</code> the reduced matrix dimension after factorization (<code>p</code> is significantly smaller than <code>n</code>), and <code>m</code> the number of machines. PSVM reduces the memory requirement from <code>O(n^2) </code> to <code>O(np/m)</code>, and improves computation time to <code>O(np^2/m)</code>.</p>
+
+<p>Additionally, PSVM handles kernels in contrast to other algorithmic approaches (Joachims, 2006; Chu et al., 2006). </p>
+<h1>Documentation</h1>
+<ul>
+<li><a href="installation.html">Installtion Instructions</a><br />
+Cluster environment setup, MPI installation and PSVM compilation with make.</li>
+<li><a href="prepare_data.html">Prepare Data</a><br />
+Data format and scope of application.</li>
+<li><a href="command_line.html">Command-line Flags</a><br />
+Command-line flags explaination.</li>
+<li><a href="run_parallel.html">Run PSVM Parallelly</a><br />
+How to run PSVM Parallelly with MPI.</li>
+<li><a href="examples.html">Examples</a><br />
+Experiments on different scales of datasets, time and memory comparison with LibSVM.</li>
+</ul>
+<h1>Citing PSVM</h1>
+<p>If you wish to publish any work based on PSVM, please cite our paper 
+as:
+Edward Chang, Kaihua Zhu, Hao Wang, Hongjie Bai, Jian Li, Zhihuan Qiu, 
+and Hang Cui, PSVM: Parallelizing Support Vector Machines on Distributed
+ Computers. NIPS 2007.</p>
 
 <p>The bibtex format is</p>
 
-<pre><code>@InProceedings{psvm,^M
-  author =   {Edward Y. Chang and Kaihua Zhu and Hao Wang and Hongjie Bai and Jian Li and Zhihuan Qiu and Hang Cui},^M
-  title =    {PSVM: Parallelizing Support Vector Machines on Distributed Computers},^M
-  booktitle =    {NIPS},^M
-  year =     {2007},^M
-  note = {Software available at \url{http://obdg.github.io/psvm}}^M
-}^M
-^M
+<pre><code>@InProceedings{psvm,
+  author =   {Edward Y. Chang and Kaihua Zhu and Hao Wang and Hongjie Bai and Jian Li and Zhihuan Qiu and Hang Cui},
+  title =    {PSVM: Parallelizing Support Vector Machines on Distributed Computers},
+  booktitle =    {NIPS},
+  year =     {2007},
+  note = {Software available at \url{http://obdg.github.io/psvm}}
+}
 </code></pre>
-
-<p>If you have any question, please feel free to contact us. And you can also ask your questions on: <a href="http://groups.google.com/group/psvm?lnk=srg">http://groups.google.com/group/psvm?lnk=srg</a></p>
-
-<p>Acknowledgment:</p>
-
+<h1>Acknowledgment</h1>
 <p>We would like to thank National Science Foundation for their grant IIS-0535085, which made the start of this project at UCSB in 2006 possible.</p>
 
       <footer class="site-footer">
-        <span class="site-footer-owner"><a href="https://github.com/obdg/psvm">Psvm</a> is maintained by <a href="https://github.com/obdg">obdg</a>.</span>
+        <span class="site-footer-owner"><a href="https://github.com/obdg/psvm">PSVM</a> is maintained by <a href="https://github.com/obdg">obdg</a>.</span>
 
         <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
       </footer>
