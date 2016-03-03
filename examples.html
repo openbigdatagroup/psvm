@@ -21,7 +21,136 @@
     <section class="main-content">
       
 
-<h1>Demo and compaison</h1>
+<h1> Examples </h1>
+  
+  <p>Following the guide of <a href="installation.html#cluster_setup">Cluster Setup</a>, we use <b>5</b> machines to build the cluster. Each machine is configured with <b>4</b> 3.4GHz CPU processors and memory larger than 8GB. To meet the requirement of memory, one machine with 3.4GHz CPU and 16GB memory is chosen to be the baseline to measure the speedup ratio.</p>
+  <p>Two datasets <i><a href="https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary.html#ijcnn1">ijcnn1</a>, <a href="https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary.html#epsilon">epsilon</a></i> are used to evaluate the performance of PSVM. The training samples' scale ranges from 50k to 400k. The datafiles of these datasets are satisfactory, so you can directly download them and conduct the experiments.</p>
+  <p>After downloading and decompressing the datasets in $psvm_dir/data/$name, you can train and test by running the following commands:
+  <p>(Note: the parameter <b>-n</b> sets the number of processors specified for execution which should not exceed the total number of your cluster's processors. Otherwise two processes will run on a single processor and training time will be limited by this slowest processor. We have <b>5</b> machines with <b>4</b> CPU processors, so, we can set <b>-n 20</b>)</p>
+  <li>Train:
+  <pre><code>mkdir -p models/ijcnn1
+mpiexec -n 20 ./svm_train -rank_ratio 0.0045 -kernel_type 2 -hyper_parm 1 -gamma 0.01 \
+-model_path models/ijcnn1/ data/ijcnn1/ijcnn1</code></pre></p>
+  <pre><code>mkdir -p models/epsilon
+mpiexec -n 20 ./svm_train -rank_ratio 0.001 -kernel_type 2 -hyper_parm 1 -gamma 0.01 \
+-model_path models/epsilon/ data/epsilon/epsilon_normalized</code></pre>
+  </li>
+  <li>Test:
+  <pre><code>mpiexec -n 20 ./svm_predict -model_path models/ijcnn1/ data/ijcnn1/ijcnn1.t</code></pre>
+  <pre><code>mpiexec -n 20 ./svm_predict -model_path models/epsilon/ data/epsilon/epsilon_normalized.t</code></pre>
+  </li>
+  </p>
+
+  <p>The running time, memory and accuracy of PSVM are reported in the following tables. The performance of LIBSVM[1] is reported for reference, with c=1, g=0.01.</p>
+
+
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+.tg .tg-baqh{text-align:center;vertical-align:top}
+.tg .tg-i81m{background-color:#ffffff;text-align:center;vertical-align:top}
+</style>
+<table class="tg">
+  <caption>ijcnn1</caption>
+  <tr>
+    <th class="tg-baqh"></th>
+    <th class="tg-baqh" colspan="3">training(49,990)</th>
+    <th class="tg-baqh" colspan="4">testing(91,701)</th>
+  </tr>
+  <tr>
+    <td class="tg-baqh">algorithm(machines)</td>
+    <td class="tg-baqh">time(s)</td>
+    <td class="tg-baqh">speedup</td>
+    <td class="tg-baqh">mem(MB)</td>
+    <td class="tg-baqh">time(s)</td>
+    <td class="tg-baqh">speedup</td>
+    <td class="tg-baqh">mem(MB)</td>
+    <td class="tg-baqh">accuracy</td>
+  </tr>
+  <tr>
+    <td class="tg-baqh">LIBVIM(1)</td>
+    <td class="tg-baqh">45</td>
+    <td class="tg-baqh">-</td>
+    <td class="tg-baqh">117</td>
+    <td class="tg-baqh">34</td>
+    <td class="tg-baqh">-</td>
+    <td class="tg-baqh">2.3</td>
+    <td class="tg-baqh">0.9066</td>
+  </tr>
+  <tr>
+    <td class="tg-baqh">PSVM(1)</td>
+    <td class="tg-baqh">68</td>
+    <td class="tg-baqh">1</td>
+    <td class="tg-baqh">124</td>
+    <td class="tg-baqh">36</td>
+    <td class="tg-baqh">1</td>
+    <td class="tg-baqh">23</td>
+    <td class="tg-baqh">0.9053</td>
+  </tr>
+  <tr>
+    <td class="tg-baqh">PSVM(5)</td>
+    <td class="tg-baqh">9.6</td>
+    <td class="tg-baqh">7</td>
+    <td class="tg-baqh">22</td>
+    <td class="tg-baqh">3.2</td>
+    <td class="tg-baqh">11</td>
+    <td class="tg-baqh">52</td>
+    <td class="tg-i81m">0.9053</td>
+  </tr>
+</table>
+<p>Note: we sorted the datafile of ijcnn1 to make the samples with label -1 followed by the samples with label 1. With models trained on the original datafile, the predicting accuracy of PSVM(5) is 18% less than PSVM(1): 74% and 92%. Sorted samples make sure that each processor can get training subset with the same distribution of the universal set. Otherwise, different distributions may effect the performance of parallel PSVM.</p>
+<table class="tg">
+  <caption>epsilon</caption>
+  <tr>
+    <th class="tg-baqh"></th>
+    <th class="tg-baqh" colspan="3">training(400k)</th>
+    <th class="tg-baqh" colspan="4">testing(100k)</th>
+  </tr>
+  <tr>
+    <td class="tg-baqh">algorithm(machines)</td>
+    <td class="tg-baqh">time(s)</td>
+    <td class="tg-baqh">speedup</td>
+    <td class="tg-baqh">mem(MB)</td>
+    <td class="tg-baqh">time(s)</td>
+    <td class="tg-baqh">speedup</td>
+    <td class="tg-baqh">mem(MB)</td>
+    <td class="tg-baqh">accuracy</td>
+  </tr>
+  <tr>
+    <td class="tg-baqh">LIBVIM(1)</td>
+    <td class="tg-baqh"></td>
+    <td class="tg-baqh">-</td>
+    <td class="tg-baqh">12385</td>
+    <td class="tg-baqh"></td>
+    <td class="tg-baqh">-</td>
+    <td class="tg-baqh"></td>
+    <td class="tg-baqh"></td>
+  </tr>
+  <tr>
+    <td class="tg-baqh">PSVM(1)</td>
+    <td class="tg-baqh">3537</td>
+    <td class="tg-baqh">1</td>
+    <td class="tg-baqh">16384</td>
+    <td class="tg-baqh">73160</td>
+    <td class="tg-baqh">1</td>
+    <td class="tg-baqh">16384</td>
+    <td class="tg-baqh">0.8624</td>
+  </tr>
+  <tr>
+    <td class="tg-baqh">PSVM(5)</td>
+    <td class="tg-baqh">892</td>
+    <td class="tg-baqh">4</td>
+    <td class="tg-baqh">4495</td>
+    <td class="tg-baqh">11019</td>
+    <td class="tg-baqh">7</td>
+    <td class="tg-baqh">2470</td>
+    <td class="tg-i81m">0.8622</td>
+  </tr>
+</table>
+<h2>References</h2>
+[1] Chih-Chung Chang and Chih-Jen Lin, LIBSVM : a library for support vector machines. ACM Transactions on Intelligent Systems and Technology, 2:27:1--27:27, 2011. Software available at http://www.csie.ntu.edu.tw/~cjlin/libsvm
+
 
 
       <footer class="site-footer">
