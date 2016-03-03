@@ -41,199 +41,19 @@ Beta version. :)</p>
 <p>Let <code>n</code> denote the number of training instances, <code>p</code> the reduced matrix dimension after factorization (<code>p</code> is significantly smaller than <code>n</code>), and <code>m</code> the number of machines. PSVM reduces the memory requirement from <code>O(n^2) </code> to <code>O(np/m)</code>, and improves computation time to <code>O(np^2/m)</code>.</p>
 
 <p>Additionally, PSVM handles kernels in contrast to other algorithmic approaches (Joachims, 2006; Chu et al., 2006). </p>
-<h1>Installation</h1>
-<h3>Prerequisites</h3>
-  <ul>
-    <li>Parallel Infrastructure is based on MPI. Firstly mpich2 must be installed before running PSVM. You can download it from <a href="http://www.mcs.anl.gov/research/projects/mpich2/">http://www.mcs.anl.gov/research/projects/mpich2/</a>.
-
-      <ul>
-
-        <li>Install mpich2
-        <ul>
-          <li>Download mpich2-1.0.6p1.tar.gz</li>
-          <li>Extract it to a path</li>
-          <li><code>./configure</code></li>
-          <li><code>make</code></li>
-          <li><code>sudo make install</code></li>
-          <li>After installing, you will find some binaries and scripts in $PATH. Test by running <code>mpd</code> to see if it exists</li>
-        </ul>
-        </li>
-
-        <li>Create password file <code>~/.mpd.conf</code> with access mode 600 (rw-------) in home directory. The file should contain a single line <code>MPD_SECRETWORD=PASSWORD</code>. Because you may have many  machines, you must do this on each machine.
-        <ul>
-        <li><code>touch ~/.mpd.conf</code></li>
-        <li><code>chmod 600 ~/.mpd.conf</code></li>
-        <li><code>echo "MPD_SECRETWORD=anypassword" &gt; ~/.mpd.conf</code></li>
-        </ul>
-        </li>
-
-        <li>Pick one machine as the master and startup mpd(mpi daemon)
-        <ul>
-        <li><code>mpd --daemon --listenport=55555</code></li>
-        </ul>
-        </li>
-
-        <li>Other machines act as slave and must connect to the master
-        <ul>
-        <li><code>mpd --daemon -h serverHostName -p 55555</code></li>
-        </ul>
-        </li>
-
-        <li>Check whether the environment is setup successfully: on master, run <code>mpdtrace</code>, you will see all the slaves. If no machines show up, you must check your mpi setup and refer to mpich2 user manual.</li>
-      </ul>
-    </li>
-    </ul>
-  <h3> Compilation with make</h3>
-  <ul>
-    <li>Download PSVM package and extract and run <code>make</code> in its directory. You will see two binaries generated <code>svm_train</code>/<code>svm_predict</code>. We use mpich2 builtin compiler mpicxx to compile, it is a wrap of g++.</li>
-  </ul>
-  <h3> Do a simple training and testing </h3>
-  <ul>
-    <li>Download <a href="http://www.csie.ntu.edu.tw/%7Ecjlin/libsvmtools/datasets/binary/splice">splice</a> and  <a href="http://www.csie.ntu.edu.tw/%7Ecjlin/libsvmtools/datasets/binary/splice.t">splice.t</a> as training and validating sample</li>
-
-    <li>Train
-      <ul>
-        <li><code>mkdir /home/$USER/model/</code></li>
-        <li><code>./svm_train -rank_ratio 0.1  -kernel_type 2 -hyper_parm 1  -gamma 0.01 -model_path /home/$USER/model/  splice</code></li>
-      </ul>
-    </li>
-
-    <li>Predict
-      <ul>
-        <li><code>./svm_predict -model_path /home/$USER/model/  splice.t</code></li>
-<pre><code>========== Predict Accuracy ==========
-Accuracy          : 0.864368
-Positive Precision: 0.875899
-Positive Recall   : 0.861185
-Negative Precision: 0.852305
-Negative Recall   : 0.867816
-</code></pre>
-        <li>You will also see a file named PredictResult generated in 
-the /home/$USER/model/ folder. This file stores the predicted labels 
-compared to the original labels of each testing element.
-      </li></ul>
-    </li>
-  </ul>
-
-<h1>Prepare datafile</h1>
-  <ul>
-    <li>Our datafile is similar to libsvm. Data is stored using a sparse
- representation, with one element per line. Each line begins with an 
-integer, which is the element's label and which must be either -1 or 1. 
-The label is then followed by a list of features, of the form 
-featureID:featureValue. It is like <code>&lt;label&gt; &lt;index1&gt;:&lt;value1&gt; &lt;index2&gt;:&lt;value2&gt; ...</code> We only support <strong>binary classification</strong>, so the label must be <code>1/-1</code>. Feature index must be in increasing order.</li>
-
-    <li>The testing/validating data format is the same as the training 
-file format. Note in particular that each element must still have a 
-label, although these labels are only used for computing accuracy, 
-precision, and recall statistics. If you don't have labels for the 
-elements, just provide fake labels.</li>
-
-    <li>Example: 
-    <p>Suppose there are two elements, each with two features.
- The first one is Feature0: 1, Feature1: 2 and belongs to class 1; The 
-second one is Feature0: 100, Feature1: 200 and belongs to class -1. Then
- the datafile would look like: <pre><code>1    0:1    1:2
--1   0:100  1:200</code></pre></p></li>
-  </ul>
-
-
-<h1>Command-line flags</h1>
-  <ul>
-    <li>Training (svm_train) flags
-  
-    <ul>
-      <li>
-        <code>kernel_type</code>:
-        <ul>
-          <li>0: normalized-linear</li>
-          <li>1: normalized-polynomial</li>
-          <li>2: RBF Gaussian</li>
-          <li>3: Laplasian</li>
-        </ul>
-      </li>
-  
-      <li>
-        <code>rank_ratio</code>: approximation ratio between 0 and 1.  
-     </li>
-      <li>
-        <code>hyper_parm</code>: C in SVM. This is the same as libsvm "-c" parameter</li>
-      <li>
-        <code>gamma</code>: gamma value if you use RBF kernel. This is the same as libsvm "-g" parameter</li>
-      <li>
-        <code>poly_degree</code>: degree if you use normalized-polynomial kernel. This is the same as libsvm "-d" parameter</li>
-      <li>
-        <code>model_path</code>: the location to save the training model and checkpoints to.  Be sure that this path is <strong>EMPTY</strong>
- before training a new model: svm_train will interpret any of its 
-checkpoints left in this directory as checkpoints for the current model.</li>
-      <li>
-        <code>failsafe</code>: If failsafe is set to true, program will periodically write checkpoints to <code>model_path</code> and if program fail, it will restart from last checkpoints.</li>
-      <li>
-        <code>save_interval</code>: Because PSVM supports failsafe. On every <code>save_interval</code>
- seconds, program will write a checkpoint. If PSVM fails such as machine
- is down, it will restart from last checkpoint on next execution.</li>
-      <li>
-        <code>surrogate_gap_threshold</code>, <code>feasible_threshold</code>, <code>max_iteration</code>: Because PSVM use Interior Point Method, there needs many iterations. The iteration will stop by checking ((surrogate_gap &lt; <code>surrogate_gap_threshold</code> and primal residual &lt; <code>feasible_threshold</code> and dual residual &lt; <code>feasible_threshold</code>) or iterations &gt; <code>max_iteration</code>). Usually setting them to default will handle most of the cases.</li>
-      <li>
-        <code>positive_weight</code>, <code>negative_weight</code>: For 
-unbalanced data, we should set a more-than-one weight to one of the 
-class. For example there are 100 positive data and 10 negative data, it 
-is suggested you set negative_weight to 10.</li>
-      <li>Others: simply run svm_train to get description for each 
-parameter. They are not frequently used unless you are quite familiar 
-with algorithm details.</li>
-    </ul>
-    </li>
-    <li>Predicting (svm_predict) flags
-  
-    <ul>
-      <li>
-        <code>model_path</code>: The path of the model which we use to predict.</li>
-      <li>
-        <code>output_path</code>: Where to output <code>PredictResult</code></li>
-    </ul>
-    </li>
-
-    <li> Selection of rank_ratio
-    <p><code>rank_ratio</code> decides the reduced matrix dimension <code>p</code> (<code>p = n*rank_ratio</code>). Higher values yield higher accuracy at the cost of increased memory 
-usage and training time.  If you are unsure what value to use, we recommend a value of <code>1/sqrt(n)</code>, where <code>n</code> is the number of training samples. Also you should consider
-the number of machines and memory you can use when setting rank_ratio.
-    </p>
-    </li>
-  </ul>
-
-<h1> Run PSVM parallelly </h1>
-  <ul>
-  <li>Firstly, mpich2 must be setup successfully. Type <code>mpdtrace</code> on master to check how many machines we have.</li>
-  <li>Binaries(<code>svm_train</code>, <code>svm_predict</code>) must be located on a shared path 
-that each computer can access(The path name should be the same on all 
-computers). You should also prepare a model path which all machines can 
-access.</li>
-  <li>On master: run <code>mpiexec -n numberOfProcesses /PATH/svm_train ....</code>
-    <ul>
-      <li>Simple add <code>mpiexec -n numberOfProcesses</code> before original command
- line, then the program will run on parallel machines. (The number of 
-machines specified for execution should not exceed the total number of 
-machines, or two processes will run on a single machine and training 
-time will be limited by this slowest machine.)</li>
-      <li>We can also add <code>-machinefile file</code> option by creating a file with node names followed by a colon and a number of processes to spawn:</li>
-<pre><code>machine1:#process
-machine2:#process
-machine3:#process
- ...
-</code></pre>
-      Thus, we can assign how many processes we can start on each node. Besides, we should also use <code>-n numberOfProcesses</code> to assign the total number of processes
-      we want to start, which should not exceed the sum of #process on each line of the machine file.
-      <li>After training, model.0, model.1 such things will be generated in the shared <code>model_path</code></li>
-    </ul>
-  </li>
-  <li>On master: run <code>mpiexec -n numberOfMachines /PATH/svm_predict ....</code></li>
-    <ul>
-      <li>Note: The number of machines used to predict MUST be the SAME as the number of machines used to train.</li>
-    </ul>
-  </ul>
-
-<h1>Demo and compaison</h1>
+<h1>Documentation</h1>
+<ul>
+<li><a href="installation.html">Installtion Instructions</a><br />
+Cluster environment setup, MPI installation and PSVM compilation with make.</li>
+<li><a href="prepare_data.html">Prepare Data</a><br />
+Data format and scope of application.</li>
+<li><a href="command_line.html">Command-line Flags</a><br />
+Command-line flags explaination.</li>
+<li><a href="run_parallel.html">Run PSVM Parallelly</a><br />
+How to run PSVM Parallelly with MPI.</li>
+<li><a href="examples.html">Examples</a><br />
+Experiments on different scales of datasets, time and memory comparison with LibSVM.</li>
+</ul>
 <h1>Citing PSVM</h1>
 <p>If you wish to publish any work based on PSVM, please cite our paper 
 as:
@@ -243,14 +63,13 @@ and Hang Cui, PSVM: Parallelizing Support Vector Machines on Distributed
 
 <p>The bibtex format is</p>
 
-<pre><code>@InProceedings{psvm,^M
-  author =   {Edward Y. Chang and Kaihua Zhu and Hao Wang and Hongjie Bai and Jian Li and Zhihuan Qiu and Hang Cui},^M
-  title =    {PSVM: Parallelizing Support Vector Machines on Distributed Computers},^M
-  booktitle =    {NIPS},^M
-  year =     {2007},^M
-  note = {Software available at \url{http://obdg.github.io/psvm}}^M
-}^M
-^M
+<pre><code>@InProceedings{psvm,
+  author =   {Edward Y. Chang and Kaihua Zhu and Hao Wang and Hongjie Bai and Jian Li and Zhihuan Qiu and Hang Cui},
+  title =    {PSVM: Parallelizing Support Vector Machines on Distributed Computers},
+  booktitle =    {NIPS},
+  year =     {2007},
+  note = {Software available at \url{http://obdg.github.io/psvm}}
+}
 </code></pre>
 <h1>Acknowledgment</h1>
 <p>We would like to thank National Science Foundation for their grant IIS-0535085, which made the start of this project at UCSB in 2006 possible.</p>
