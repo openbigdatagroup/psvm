@@ -20,34 +20,29 @@
 
     <section class="main-content">
       <h1>Introduction</h1>
-      <p>It is the code of the following paper:
-<a href="http://books.nips.cc/papers/files/nips20/NIPS2007_0435.pdf">http://books.nips.cc/papers/files/nips20/NIPS2007_0435.pdf</a>. This is an all-kernel-support version of SVM, which can parallel run on multiple machines.</p>
+      <p>This is the project of the following paper:
+<a href="http://books.nips.cc/papers/files/nips20/NIPS2007_0435.pdf">PSVM: Parallelizing Support Vector Machines on Distributed Computers</a>. It is an all-kernel-support version of SVM, which can parallel run on multiple machines.</p>
 
 <p>We migrate it from Google's large scale computing infrastructure to 
 MPI, then every one can use and run it. Please notice this open source 
 project is a 20% project (we do it in part time), and it is still in a 
 Beta version. :)</p>
 
-<p>If you wish to publish any work based on psvm, please cite our paper 
-as:
-Edward Chang, Kaihua Zhu, Hao Wang, Hongjie Bai, Jian Li, Zhihuan Qiu, 
-and Hang Cui, PSVM: Parallelizing Support Vector Machines on Distributed
- Computers. NIPS 2007. Software available at <a href="http://obdg.github.io/psvm">http://obdg.github.io/psvm</a>.</p>
+<p> Software available at <a href="http://obdg.github.io/psvm">https://github.com/obdg/psvm</a>.</p>
 
-<p>The bibtex format is</p>
+<p>If you have any question, please feel free to contact us. And you can also ask your questions on: <a href="http://groups.google.com/group/psvm?lnk=srg">PSVM-users group</a></p>
+<h1>Why PSVM</h1>
+<p>Although widely used, Support Vector Machines (SVMs) suffer from a widely recognized sacalability problem in both memory use and computational time.</p>
 
-<pre><code>@InProceedings{psvm,^M
-  author =   {Edward Y. Chang and Kaihua Zhu and Hao Wang and Hongjie Bai and Jian Li and Zhihuan Qiu and Hang Cui},^M
-  title =    {PSVM: Parallelizing Support Vector Machines on Distributed Computers},^M
-  booktitle =    {NIPS},^M
-  year =     {2007},^M
-  note = {Software available at \url{http://obdg.github.io/psvm}}^M
-}^M
-^M
-</code></pre>
+<p>PSVM achieves memory reduction and computation speedup via a row-based parallel Incomplete Cholesky Factorization (ICF) algorithm and parallel interior-Point Method(IPM).</p>
 
-<p>If you have any question, please feel free to contact us. And you can also ask your questions on: <a href="http://groups.google.com/group/psvm?lnk=srg">http://groups.google.com/group/psvm?lnk=srg</a></p>
+<p>Empirical study shows that PSVM effectively speeds up training time for large-scale tasks while maintaining high training accuracy.</p>
+
+<p>Let <code>n</code> denote the number of training instances, <code>p</code> the reduced matrix dimension after factorization (<code>p</code> is significantly smaller than <code>n</code>), and <code>m</code> the number of machines. PSVM reduces the memory requirement from <code>O(n^2) </code> to <code>O(np/m)</code>, and improves computation time to <code>O(np^2/m)</code>.</p>
+
+<p>Additionally, PSVM handles kernels in contrast to other algorithmic approaches (Joachims, 2006; Chu et al., 2006). </p>
 <h1>Installation</h1>
+<h3>Prerequisites</h3>
   <ul>
     <li>Parallel Infrastructure is based on MPI. Firstly mpich2 must be installed before running PSVM. You can download it from <a href="http://www.mcs.anl.gov/research/projects/mpich2/">http://www.mcs.anl.gov/research/projects/mpich2/</a>.
 
@@ -87,31 +82,12 @@ and Hang Cui, PSVM: Parallelizing Support Vector Machines on Distributed
         <li>Check whether the environment is setup successfully: on master, run <code>mpdtrace</code>, you will see all the slaves. If no machines show up, you must check your mpi setup and refer to mpich2 user manual.</li>
       </ul>
     </li>
+    </ul>
+  <h3> Compilation with make</h3>
+  <ul>
     <li>Download PSVM package and extract and run <code>make</code> in its directory. You will see two binaries generated <code>svm_train</code>/<code>svm_predict</code>. We use mpich2 builtin compiler mpicxx to compile, it is a wrap of g++.</li>
   </ul>
-
-<h1>Prepare datafile</h1>
-  <ul>
-    <li>Our datafile is similar to libsvm. Data is stored using a sparse
- representation, with one element per line. Each line begins with an 
-integer, which is the element's label and which must be either -1 or 1. 
-The label is then followed by a list of features, of the form 
-featureID:featureValue. It is like <code>&lt;label&gt; &lt;index1&gt;:&lt;value1&gt; &lt;index2&gt;:&lt;value2&gt; ...</code> We only support binary classification, so the label must be <code>1/-1</code>. Feature index must be in increasing order.</li>
-
-    <li>The testing/validating data format is the same as the training 
-file format. Note in particular that each element must still have a 
-label, although these labels are only used for computing accuracy, 
-precision, and recall statistics. If you don't have labels for the 
-elements, just provide fake labels.</li>
-
-    <li>Example: Suppose there are two elements, each with two features.
- The first one is Feature0: 1, Feature1: 2 and belongs to class 1; The 
-second one is Feature0: 100, Feature1: 200 and belongs to class -1. Then
- the datafile would look like: <pre><code>1    0:1    1:2
--1   0:100  1:200</code></pre></li>
-  </ul>
-
-<h1> Do a simple training and testing </h1>
+  <h3> Do a simple training and testing </h3>
   <ul>
     <li>Download <a href="http://www.csie.ntu.edu.tw/%7Ecjlin/libsvmtools/datasets/binary/splice">splice</a> and  <a href="http://www.csie.ntu.edu.tw/%7Ecjlin/libsvmtools/datasets/binary/splice.t">splice.t</a> as training and validating sample</li>
 
@@ -138,6 +114,30 @@ compared to the original labels of each testing element.
       </li></ul>
     </li>
   </ul>
+
+<h1>Prepare datafile</h1>
+  <ul>
+    <li>Our datafile is similar to libsvm. Data is stored using a sparse
+ representation, with one element per line. Each line begins with an 
+integer, which is the element's label and which must be either -1 or 1. 
+The label is then followed by a list of features, of the form 
+featureID:featureValue. It is like <code>&lt;label&gt; &lt;index1&gt;:&lt;value1&gt; &lt;index2&gt;:&lt;value2&gt; ...</code> We only support <strong>binary classification</strong>, so the label must be <code>1/-1</code>. Feature index must be in increasing order.</li>
+
+    <li>The testing/validating data format is the same as the training 
+file format. Note in particular that each element must still have a 
+label, although these labels are only used for computing accuracy, 
+precision, and recall statistics. If you don't have labels for the 
+elements, just provide fake labels.</li>
+
+    <li>Example: 
+    <p>Suppose there are two elements, each with two features.
+ The first one is Feature0: 1, Feature1: 2 and belongs to class 1; The 
+second one is Feature0: 100, Feature1: 200 and belongs to class -1. Then
+ the datafile would look like: <pre><code>1    0:1    1:2
+-1   0:100  1:200</code></pre></p></li>
+  </ul>
+
+
 <h1>Command-line flags</h1>
   <ul>
     <li>Training (svm_train) flags
@@ -155,9 +155,7 @@ compared to the original labels of each testing element.
   
       <li>
         <code>rank_ratio</code>: approximation ratio between 0 and 1.  
-Higher values yield higher accuracy at the cost of increased memory 
-usage and training time.  If you are unsure what value to use, we 
-recommend a value of <code>1/sqrt(n)</code>, where <code>n</code> is the number of training samples.</li>
+     </li>
       <li>
         <code>hyper_parm</code>: C in SVM. This is the same as libsvm "-c" parameter</li>
       <li>
@@ -195,36 +193,70 @@ with algorithm details.</li>
         <code>output_path</code>: Where to output <code>PredictResult</code></li>
     </ul>
     </li>
+
+    <li> Selection of rank_ratio
+    <p><code>rank_ratio</code> decides the reduced matrix dimension <code>p</code> (<code>p = n*rank_ratio</code>). Higher values yield higher accuracy at the cost of increased memory 
+usage and training time.  If you are unsure what value to use, we recommend a value of <code>1/sqrt(n)</code>, where <code>n</code> is the number of training samples. Also you should consider
+the number of machines and memory you can use when setting rank_ratio.
+    </p>
+    </li>
   </ul>
 
 <h1> Run PSVM parallelly </h1>
   <ul>
-  <li>Firstly, mpich2 must be setup successfully. Type mpdtrace on master to check how many machines we have.</li>
-  <li>Binaries(svm_train, svm_predict) must be located on a shared path 
+  <li>Firstly, mpich2 must be setup successfully. Type <code>mpdtrace</code> on master to check how many machines we have.</li>
+  <li>Binaries(<code>svm_train</code>, <code>svm_predict</code>) must be located on a shared path 
 that each computer can access(The path name should be the same on all 
 computers). You should also prepare a model path which all machines can 
 access.</li>
-  <li>On master: run mpiexec -n numberOfMachines /PATH/svm_train ....
+  <li>On master: run <code>mpiexec -n numberOfProcesses /PATH/svm_train ....</code>
     <ul>
-      <li>Simple add mpiexec -n numberOfMachines before original command
+      <li>Simple add <code>mpiexec -n numberOfProcesses</code> before original command
  line, then the program will run on parallel machines. (The number of 
 machines specified for execution should not exceed the total number of 
 machines, or two processes will run on a single machine and training 
 time will be limited by this slowest machine.)</li>
-      <li>After training, model.0, model.1 such things will be generated in the shared model_path</li>
+      <li>We can also add <code>-machinefile file</code> option by creating a file with node names followed by a colon and a number of processes to spawn:</li>
+<pre><code>machine1:#process
+machine2:#process
+machine3:#process
+ ...
+</code></pre>
+      Thus, we can assign how many processes we can start on each node. Besides, we should also use <code>-n numberOfProcesses</code> to assign the total number of processes
+      we want to start, which should not exceed the sum of #process on each line of the machine file.
+      <li>After training, model.0, model.1 such things will be generated in the shared <code>model_path</code></li>
     </ul>
   </li>
-  <li>On master: run mpiexec -n numberOfMachines /PATH/svm_predict ....</li>
+  <li>On master: run <code>mpiexec -n numberOfMachines /PATH/svm_predict ....</code></li>
     <ul>
       <li>Note: The number of machines used to predict MUST be the SAME as the number of machines used to train.</li>
     </ul>
   </ul>
 
+<h1>Demo and compaison</h1>
+<h1>Citing PSVM</h1>
+<p>If you wish to publish any work based on PSVM, please cite our paper 
+as:
+Edward Chang, Kaihua Zhu, Hao Wang, Hongjie Bai, Jian Li, Zhihuan Qiu, 
+and Hang Cui, PSVM: Parallelizing Support Vector Machines on Distributed
+ Computers. NIPS 2007.</p>
+
+<p>The bibtex format is</p>
+
+<pre><code>@InProceedings{psvm,^M
+  author =   {Edward Y. Chang and Kaihua Zhu and Hao Wang and Hongjie Bai and Jian Li and Zhihuan Qiu and Hang Cui},^M
+  title =    {PSVM: Parallelizing Support Vector Machines on Distributed Computers},^M
+  booktitle =    {NIPS},^M
+  year =     {2007},^M
+  note = {Software available at \url{http://obdg.github.io/psvm}}^M
+}^M
+^M
+</code></pre>
 <h1>Acknowledgment</h1>
 <p>We would like to thank National Science Foundation for their grant IIS-0535085, which made the start of this project at UCSB in 2006 possible.</p>
 
       <footer class="site-footer">
-        <span class="site-footer-owner"><a href="https://github.com/obdg/psvm">Psvm</a> is maintained by <a href="https://github.com/obdg">obdg</a>.</span>
+        <span class="site-footer-owner"><a href="https://github.com/obdg/psvm">PSVM</a> is maintained by <a href="https://github.com/obdg">obdg</a>.</span>
 
         <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
       </footer>
