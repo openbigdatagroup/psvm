@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>PSVM by obdg</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <style type="text/css">
+      .file_name {
+        color: #1e6bb8
+      }
+    </style>
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">PSVM</h1>
+      <h2 class="project-tagline">Parallelizing Support Vector Machines on Distributed Computers</h2>
+      <a href="https://github.com/obdg/psvm" class="btn">View on GitHub</a>
+      <a href="https://github.com/obdg/psvm/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/obdg/psvm/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>Installation</h1><hr>
+      <p>
+        In order to run PSVM, you should install:
+        <ul>
+          <li><a href="#gcc_setup">GCC</a></li>
+          <li><a href="#mpi_setup">MPI library</a></li>
+          <li><a href="#psvm_setup">PSVM</a></li>
+        </ul>
+        If you wish to run PSVM parallelly, you should also:
+        <ul>
+          <li><a href="#cluster_setup">Set up a cluster environment</a></li>
+        </ul>
+      </p>
+
+      <h2 id="gcc_setup">GCC Setup</h2><hr>
+      <p>
+        To be able to compile source code of MPI in the next step, you need to install GCC compiler on your computer.
+        <pre><code>sudo apt-get install build-essential</code></pre>
+      </p>
+
+
+      <h2 id="mpi_setup">MPI library Setup</h2><hr>
+      <p>
+        Parallel infrastruction is based on MPI. Concretely, mpich2 should be installed befor runing PSVM. You can download it from here: <a href="http://www.mpich.org/static/downloads/1.0.6p1/mpich2-1.0.6p1.tar.gz">http://www.mpich.org/static/downloads/1.0.6p1/mpich2-1.0.6p1.tar.gz.</a>
+        <pre><code><li>tar xvf mpich2-1.0.6p1.tar.gz && cd mpich2-1.0.6p1</li><li>./configure</li><li>make</li><li>sudo make install</li></code></pre>
+      </p>
+
+      <h2 id="psvm_setup">PSVM Setup</h2><hr>
+      <p>
+        The code of PSVM is avaliable here:<a href="https://github.com/obdg/psvm">https://github.com/obdg/psvm</a>. You can choice to clone it into your workspace by using git, or you can directly download it in "compressed-file" fashion such as ".zip" or ".tar.gz" and uncompress it.
+      </p>
+      <p>
+        Step into the workspace of PSVM you can find:
+        <ul>
+          <li><font class="file_name">src:</font> <i>source code of svm</i></li>
+          <li><font class="file_name">data:</font> <i>testing dataset</i></li>
+          <li><font class="file_name">Makefile</font></li>
+          <li><font class="file_name">Readme.md</font></li>
+        </ul>
+      </p>
+      <p>
+        Compile PSVM on your computer:
+        <ul>
+          <li>make</li>
+          <li>After that, binary files <font class="file_name">svm_train</font> and <font class="file_name">svm_predict</font> are produced and added into workspace</li>
+        </ul>
+      </p>
+      <p>
+        Next step, train a sample model by PSVM using testing dataset and predict result:
+        <pre><code><li>./svm_train -rank_ratio 0.1 -kernel_type 2 -hyper_parm 1 -gamma 0.01 data/splice</li><li>./svm_predict data/splice.t</li></code></pre>
+      </p>
+      <p>
+        Finally, if you can get information same as below:
+<pre>========== Predict Accuracy ==========
+Accuracy          : 0.864368
+Positive Precision: 0.875899
+Positive Recall   : 0.861185
+Negative Precision: 0.852305
+Negative Recall   : 0.867816</pre>
+Congratulations! PSVM is successfully installed on your computer.
+      </p>
+
+      <h2 id="cluster_setup">Cluster Setup</h2><hr>
+      <p>
+        To utilize parallel property of PSVM, you need to set up a cluster environment. In this part, we will build up the cluster step by step.<br>
+        Assume we have 4 nodes with these host names: master, node0, node1, node2.
+        <h3>1. Define hostnames in /etc/hosts</h3>
+        <p>
+          Edit <font class="file_name">/etc/hosts</font> in each computer among the cluster like these:
+<pre>127.0.0.1     localhost
+192.168.133.100 master
+192.168.133.101 node0
+192.168.133.102 node1
+192.168.133.103 node2</pre>
+        </p>
+        <h3>2. Create account</h3>
+        <p>
+          You need to create account with same username and userid across all computers like this:
+          <pre><code>sudo adduser --uid 1005 psvmer</code></pre>
+        </p>
+        <h3>3. Configure MPI</h3>
+        <p>
+          After creating account in step 2, for each computer among the cluster, we need to create MPI configuration file under the home directory of this account like this:
+          <pre><code><li>touch ~/.mpd.conf</li><li>chmod 600 ~/.mpd.conf</li><li>echo "MPD_SECRETWORD=your_password" > ~/.mpd.conf</li></code></pre>  
+        </p>
+        <h3>4. Create shared directory among the cluster</h3>
+        <p>
+          To parallelly run PSVM on cluster, the binary files <font class="file_name">svm_train</font> and <font class="file_name">svm_predict</font> should be synced among all computers. To this end, we use NFS service on the master node to share a directory containing binary files with other slave nodes.
+          <p>
+            <p>First, install NFS on each computer.</p>
+            For master node:
+            <pre><code>sudo apt-get install nfs-server</code></pre>
+            For slave node:
+            <pre><code>sudo apt-get install nfs-client</code></pre>
+          </p>
+          <p>
+            Second, share directory across computers.
+            <pre><code>mkdir /home/psvmer/shared_dir</code></pre>
+            On master node do like this:
+            <pre><code><li>echo "/home/psvmer/shared_dir * (rw, sync)" | sudo tee -a /etc/exports</li><li>sudo service nfs-kernel-server restart</li></code></pre>
+            After that, on each slave node, mount the shared directory:</li>
+            <pre><code>sudo mount master:/home/psvmer/shared_dir /home/psvmer/shared_dir</code></pre>
+          </p>
+        </p>
+        <h3>5. Build connection between computers</h3>
+        <p>
+          <li>Log in each computer with the account you have created</li>
+          <li>Start MPI on master node:</li>
+          <pre><code>mpd --daemon --listenport=55555</code></pre>
+          <li>Connect all slave nodes to the master node:</li>
+          <pre><code>mpd --daemon -h master -p 55555</code></pre>
+          <li>Check connection on the master:</li>
+          <pre><code>mpdtrace -l</code></pre>
+          If you can see all slave nodes, the cluster environment has been set up successfully.
+        </p>
+      </p>
+      
+    </section>
+
+
+  </body>
+</html>
