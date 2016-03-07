@@ -26,7 +26,7 @@
   <p>Following the guide of <a href="installation.html#cluster_setup">Cluster Setup</a>, we use <b>5</b> machines to build the cluster. Each machine is configured with <b>4</b> 3.4GHz CPU processors and memory larger than 8GB. To meet the requirement of memory, one machine with 3.4GHz CPU and 16GB memory is chosen to be the baseline to measure the speedup ratio.</p>
   <p>Two datasets <i><a href="https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary.html#ijcnn1">ijcnn1</a>, <a href="https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary.html#epsilon">epsilon</a></i> are used to evaluate the performance of PSVM. The training samples' scale ranges from 50k to 400k. The datafiles of these datasets are satisfactory, so you can directly download them and conduct the experiments.</p>
   <p>After downloading and decompressing the datasets in $psvm_dir/data/$name, you can train and test by running the following commands:
-  <p>(Note: the parameter <b>-n</b> sets the number of processors specified for execution which should not exceed the total number of your cluster's processors. Otherwise two processes will run on a single processor and training time will be limited by this slowest processor. We have <b>5</b> machines with <b>4</b> CPU processors, so, we can set <b>-n 20</b>)</p>
+  <p>(Note: 1. the parameter <b>-n</b> sets the number of processors specified for execution which should not exceed the total number of your cluster's processors. Otherwise two processes will run on a single processor and training time will be limited by this slowest processor. We have <b>5</b> machines with <b>4</b> CPU processors, so, we can set <b>-n 20</b>. 2. we set <b>-rank_ratio 1/sqrt(n)</b>, where n is training sample number.)</p>
   <li>Train:
   <pre><code>mkdir -p models/ijcnn1
 mpiexec -n 20 ./svm_train -rank_ratio 0.0045 -kernel_type 2 -hyper_parm 1 -gamma 0.01 \
@@ -119,13 +119,13 @@ mpiexec -n 20 ./svm_train -rank_ratio 0.001 -kernel_type 2 -hyper_parm 1 -gamma 
   </tr>
   <tr>
     <td class="tg-baqh">LIBVIM(1)</td>
-    <td class="tg-baqh"></td>
+    <td class="tg-baqh">225240</td>
     <td class="tg-baqh">-</td>
     <td class="tg-baqh">12385</td>
-    <td class="tg-baqh"></td>
+    <td class="tg-baqh">50967</td>
     <td class="tg-baqh">-</td>
-    <td class="tg-baqh"></td>
-    <td class="tg-baqh"></td>
+    <td class="tg-baqh">6914</td>
+    <td class="tg-baqh">0.8856</td>
   </tr>
   <tr>
     <td class="tg-baqh">PSVM(1)</td>
@@ -148,6 +148,7 @@ mpiexec -n 20 ./svm_train -rank_ratio 0.001 -kernel_type 2 -hyper_parm 1 -gamma 
     <td class="tg-i81m">0.8622</td>
   </tr>
 </table>
+<p>Note: if using bigger rank_ratio, you can get more accuracy model but with longer time. For example, the accuracy of PSVM(5) is 0.8855 when we set rank_ratio = 0.005, and training/testing time is 5137s/7979s. </p>
 <h2>References</h2>
 [1] Chih-Chung Chang and Chih-Jen Lin, LIBSVM : a library for support vector machines. ACM Transactions on Intelligent Systems and Technology, 2:27:1--27:27, 2011. Software available at http://www.csie.ntu.edu.tw/~cjlin/libsvm
 
