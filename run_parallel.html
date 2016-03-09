@@ -22,7 +22,7 @@
       
 <h1> Run PSVM parallelly </h1>
   <ul>
-  <li>Firstly, mpich2 must be setup successfully. Type <code>mpdtrace</code> on master to check how many machines we have.</li>
+  <li>Firstly, mpich3.2 must be setup successfully. Type <code>mpdtrace</code> on master to check how many machines we have.</li>
   <li>Binaries(<code>svm_train</code>, <code>svm_predict</code>) must be located on a shared path 
 that each computer can access(The path name should be the same on all 
 computers). You should also prepare a model path which all machines can 
@@ -34,7 +34,7 @@ access.</li>
 machines specified for execution should not exceed the total number of 
 machines, or two processes will run on a single machine and training 
 time will be limited by this slowest machine.)</li>
-      <li>We can also add <code>-machinefile file</code> option by creating a file with node names followed by a colon and a number of processes to spawn:</li>
+      <li>We can also add <code>-f file</code> option by creating a file with node names followed by a colon and a number of processes to spawn:</li>
 <pre><code>machine1:#process
 machine2:#process
 machine3:#process
