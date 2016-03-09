@@ -47,8 +47,8 @@
 
       <h2 id="mpi_setup">MPI library Setup</h2><hr>
       <p>
-        Parallel infrastruction is based on MPI. Concretely, mpich2 should be installed befor runing PSVM. You can download it from here: <a href="http://www.mpich.org/static/downloads/1.0.6p1/mpich2-1.0.6p1.tar.gz">http://www.mpich.org/static/downloads/1.0.6p1/mpich2-1.0.6p1.tar.gz.</a>
-        <pre><code><li>tar xvf mpich2-1.0.6p1.tar.gz && cd mpich2-1.0.6p1</li><li>./configure</li><li>make</li><li>sudo make install</li></code></pre>
+        Parallel infrastruction is based on MPI. Concretely, mpich3.2 should be installed befor runing PSVM. You can download it from here: <a href="http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz">http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz</a>
+        <pre><code><li>tar xvf mpich-3.2 && cd mpich-3.2</li><li>./configure</li><li>make</li><li>sudo make install</li></code></pre>
       </p>
 
       <h2 id="psvm_setup">PSVM Setup</h2><hr>
@@ -128,16 +128,19 @@ Congratulations! PSVM is successfully installed on your computer.
             <pre><code>sudo mount master:/home/psvmer/shared_dir /home/psvmer/shared_dir</code></pre>
           </p>
         </p>
-        <h3>5. Build connection between computers</h3>
+        <h3>5. Install SSH Server</h3>
         <p>
-          <li>Log in each computer with the account you have created</li>
-          <li>Start MPI on master node:</li>
-          <pre><code>mpd --daemon --listenport=55555</code></pre>
-          <li>Connect all slave nodes to the master node:</li>
-          <pre><code>mpd --daemon -h master -p 55555</code></pre>
-          <li>Check connection on the master:</li>
-          <pre><code>mpdtrace -l</code></pre>
-          If you can see all slave nodes, the cluster environment has been set up successfully.
+          On each node:
+          <pre><code>sudo apt-get install openssh-server</code></pre>
+        </p>
+        <h3>6. Set up passwordless SSH Communication from master to slave</h3>
+        <p>
+          Log in master node with account you have created
+          <pre><code>su psvmer</code></pre>
+          Generate an RSA key:
+          <pre><code>ssh-keygen -t rsa</code></pre>
+          Send the key to all slave nodes:
+          <pre><code>ssh-copy-id -i ~/.ssh/id_rsa.pub slave-node</code></pre>
         </p>
       </p>
       
