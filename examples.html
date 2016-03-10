@@ -29,15 +29,16 @@
   <p>(Note: 1. the parameter <b>-n</b> sets the number of processors specified for execution which should not exceed the total number of your cluster's processors. Otherwise two processes will run on a single processor and training time will be limited by this slowest processor. We have <b>5</b> machines with <b>4</b> CPU processors, so, we can set <b>-n 20</b>. 2. we set <b>-rank_ratio 1/sqrt(n)</b>, where n is training sample number.)</p>
   <li>Train:
   <pre><code>mkdir -p models/ijcnn1
-mpiexec -n 20 ./svm_train -rank_ratio 0.0045 -kernel_type 2 -hyper_parm 1 -gamma 0.01 \
--model_path models/ijcnn1/ data/ijcnn1/ijcnn1</code></pre></p>
+mpiexec -n 20 -f machinefile ./svm_train -rank_ratio 0.0045 -kernel_type 2 -hyper_parm 1 \
+-gamma 0.01 -model_path models/ijcnn1/ data/ijcnn1/ijcnn1</code></pre></p>
   <pre><code>mkdir -p models/epsilon
-mpiexec -n 20 ./svm_train -rank_ratio 0.001 -kernel_type 2 -hyper_parm 1 -gamma 0.01 \
--model_path models/epsilon/ data/epsilon/epsilon_normalized</code></pre>
+mpiexec -n 20 -f machinefile ./svm_train -rank_ratio 0.001 -kernel_type 2 -hyper_parm 1 \
+-gamma 0.01 -model_path models/epsilon/ data/epsilon/epsilon_normalized</code></pre>
   </li>
   <li>Test:
-  <pre><code>mpiexec -n 20 ./svm_predict -model_path models/ijcnn1/ data/ijcnn1/ijcnn1.t</code></pre>
-  <pre><code>mpiexec -n 20 ./svm_predict -model_path models/epsilon/ data/epsilon/epsilon_normalized.t</code></pre>
+  <pre><code>mpiexec -n 20 -f machinefile ./svm_predict -model_path models/ijcnn1/ data/ijcnn1/ijcnn1.t</code></pre>
+  <pre><code>mpiexec -n 20 -f machinefile ./svm_predict -model_path models/epsilon/ \
+data/epsilon/epsilon_normalized.t</code></pre>
   </li>
   </p>
 
@@ -69,7 +70,7 @@ mpiexec -n 20 ./svm_train -rank_ratio 0.001 -kernel_type 2 -hyper_parm 1 -gamma 
     <td class="tg-baqh">accuracy</td>
   </tr>
   <tr>
-    <td class="tg-baqh">LIBVIM(1)</td>
+    <td class="tg-baqh">LIBSVM(1)</td>
     <td class="tg-baqh">45</td>
     <td class="tg-baqh">-</td>
     <td class="tg-baqh">117</td>
@@ -90,11 +91,11 @@ mpiexec -n 20 ./svm_train -rank_ratio 0.001 -kernel_type 2 -hyper_parm 1 -gamma 
   </tr>
   <tr>
     <td class="tg-baqh">PSVM(5)</td>
-    <td class="tg-baqh">9.6</td>
-    <td class="tg-baqh">7</td>
+    <td class="tg-baqh">6.8</td>
+    <td class="tg-baqh">10</td>
     <td class="tg-baqh">22</td>
-    <td class="tg-baqh">3.2</td>
-    <td class="tg-baqh">11</td>
+    <td class="tg-baqh">4.1</td>
+    <td class="tg-baqh">9</td>
     <td class="tg-baqh">52</td>
     <td class="tg-i81m">0.9053</td>
   </tr>
@@ -118,7 +119,7 @@ mpiexec -n 20 ./svm_train -rank_ratio 0.001 -kernel_type 2 -hyper_parm 1 -gamma 
     <td class="tg-baqh">accuracy</td>
   </tr>
   <tr>
-    <td class="tg-baqh">LIBVIM(1)</td>
+    <td class="tg-baqh">LIBSVM(1)</td>
     <td class="tg-baqh">225240</td>
     <td class="tg-baqh">-</td>
     <td class="tg-baqh">12385</td>
@@ -139,13 +140,13 @@ mpiexec -n 20 ./svm_train -rank_ratio 0.001 -kernel_type 2 -hyper_parm 1 -gamma 
   </tr>
   <tr>
     <td class="tg-baqh">PSVM(5)</td>
-    <td class="tg-baqh">892</td>
-    <td class="tg-baqh">4</td>
+    <td class="tg-baqh">653</td>
+    <td class="tg-baqh">5</td>
     <td class="tg-baqh">4495</td>
-    <td class="tg-baqh">11019</td>
+    <td class="tg-baqh">9981</td>
     <td class="tg-baqh">7</td>
     <td class="tg-baqh">2470</td>
-    <td class="tg-i81m">0.8622</td>
+    <td class="tg-i81m">0.8627</td>
   </tr>
 </table>
 <p>Note: if using bigger rank_ratio, you can get more accuracy model but with longer time. For example, the accuracy of PSVM(5) is 0.8855 when we set rank_ratio = 0.005, and training/testing time is 5137s/7979s. </p>
