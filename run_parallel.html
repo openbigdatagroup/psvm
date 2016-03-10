@@ -27,25 +27,22 @@
 that each computer can access(The path name should be the same on all 
 computers). You should also prepare a model path which all machines can 
 access.</li>
-  <li>On master: run <code>mpiexec -n numberOfProcesses /PATH/svm_train ....</code>
+  <li>On master: run <code>mpiexec -n numberOfProcesses -f machinefile /PATH/svm_train ....</code>
     <ul>
-      <li>Simple add <code>mpiexec -n numberOfProcesses</code> before original command
- line, then the program will run on parallel machines. (The number of 
-machines specified for execution should not exceed the total number of 
-machines, or two processes will run on a single machine and training 
-time will be limited by this slowest machine.)</li>
-      <li>We can also add <code>-f file</code> option by creating a file with node names followed by a colon and a number of processes to spawn:</li>
+      <li>Simple add <code>mpiexec -n numberOfProcesses -f machinefile</code> before original command
+ line, then the program will run on parallel machines.</li>
+      <li><code>-n numberOfProcesses</code>: the number of processes specified for execution.</li>
+      <li><code>-f machinefile</code>: list of machines in the cluster. This is a file with node names followed by a colon and a number of processes to spawn:</li>
 <pre><code>machine1:#process
 machine2:#process
 machine3:#process
  ...
 </code></pre>
-      Thus, we can assign how many processes we can start on each node. Besides, we should also use <code>-n numberOfProcesses</code> to assign the total number of processes
-      we want to start, which should not exceed the sum of #process on each line of the machine file.
+      Thus, we can assign how many processes we can start on each node. <code>numberOfProcesses</code> should not exceed the sum of <code>#process</code> on each line of the machine file.
       <li>After training, model.0, model.1 such things will be generated in the shared <code>model_path</code></li>
     </ul>
   </li>
-  <li>On master: run <code>mpiexec -n numberOfProcesses /PATH/svm_predict ....</code></li>
+  <li>On master: run <code>mpiexec -n numberOfProcesses -f machinefile /PATH/svm_predict ....</code></li>
     <ul>
       <li>Note: The number of processes used to predict MUST be the SAME as the number of machines used to train.</li>
     </ul>
