@@ -105,15 +105,10 @@ Congratulations! PSVM is successfully installed on your computer.
         </p>
         <h3>2. Create account</h3>
         <p>
-          You need to create account with same username and userid across all computers like this:
-          <pre><code>sudo adduser --uid 1005 psvmer</code></pre>
+          You need to create account with same username across all computers like this:
+          <pre><code>sudo adduser psvmer</code></pre>
         </p>
-        <h3>3. Configure MPI</h3>
-        <p>
-          After creating account in step 2, for each computer among the cluster, we need to create MPI configuration file under the home directory of this account like this:
-          <pre><code><li>touch ~/.mpd.conf</li><li>chmod 600 ~/.mpd.conf</li><li>echo "MPD_SECRETWORD=your_password" > ~/.mpd.conf</li></code></pre>  
-        </p>
-        <h3>4. Create shared directory among the cluster</h3>
+        <h3>3. Create shared directory among the cluster</h3>
         <p>
           To parallelly run PSVM on cluster, the binary files <font class="file_name">svm_train</font> and <font class="file_name">svm_predict</font> should be synced among all computers. To this end, we use NFS service on the master node to share a directory containing binary files with other slave nodes.
           <p>
@@ -132,12 +127,12 @@ Congratulations! PSVM is successfully installed on your computer.
             <pre><code>sudo mount master:/home/psvmer/shared_dir /home/psvmer/shared_dir</code></pre>
           </p>
         </p>
-        <h3>5. Install SSH Server</h3>
+        <h3>4. Install SSH Server</h3>
         <p>
           On each node:
           <pre><code>sudo apt-get install openssh-server</code></pre>
         </p>
-        <h3>6. Set up passwordless SSH Communication from master to slave</h3>
+        <h3>5. Set up passwordless SSH Communication from master to slave</h3>
         <p>
           Log in master node with account you have created
           <pre><code>su psvmer</code></pre>
