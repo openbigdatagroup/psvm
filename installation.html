@@ -48,7 +48,7 @@
       <h2 id="mpi_setup">MPI library Setup</h2><hr>
       <p>
       Parallel infrastructure is based on MPI. <a href="http://www.mpich.org/">mpich</a> should be installed before running PSVM. You can download the latest version from <a href="http://www.mpich.org/downloads/">here</a>.
-        <pre><code>tar xvf mpich-3.2 && cd mpich-3.2
+        <pre><code>tar xvf mpich-3.2.tar.gz && cd mpich-3.2
 ./configure
 make
 sudo make install</code></pre>
@@ -63,7 +63,8 @@ sudo make install</code></pre>
         The folder structure is:
         <ul>
           <li><font class="file_name">src:</font> <i>source code of svm</i></li>
-          <li><font class="file_name">data:</font> <i>testing dataset</i></li>
+          <li><font class="file_name">data:</font> <i>training and testing data</i></li>
+          <li><font class="file_name">docker:</font> <i>Dockerfile and scripts</i></li>
           <li><font class="file_name">Makefile</font></li>
           <li><font class="file_name">Readme.md</font></li>
         </ul>
@@ -94,7 +95,7 @@ Congratulations! PSVM is successfully installed on your computer.
         To utilize parallel property of PSVM, you need to set up a cluster environment. In this part, we will build up the cluster step by step.<br>
         Assume we have 4 nodes with these host names: master, node0, node1, node2.
         <h3>1. Define hostnames in /etc/hosts</h3>
-        <p>Assuming we have the following network env </p>
+        <p>Assuming we have the following network environment: </p>
 <pre>
 #<span class="file_name">/etc/hosts</span>
 127.0.0.1     localhost

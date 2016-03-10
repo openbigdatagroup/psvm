@@ -69,16 +69,16 @@ with algorithm details.</li>
   
     <ul>
       <li>
-        <code>model_path</code>: The path of the model which we use to predict.</li>
+        <code>model_path</code>: the path of the model which we use to predict.</li>
       <li>
-        <code>output_path</code>: Where to output <code>PredictResult</code></li>
+        <code>output_path</code>: where to output <code>PredictResult</code></li>
     </ul>
     </li>
 
-    <li> Selection of rank_ratio
+    <li> Selection of <code>rank_ratio</code>
     <p><code>rank_ratio</code> decides the reduced matrix dimension <code>p</code> (<code>p = n*rank_ratio</code>). Higher values yield higher accuracy at the cost of increased memory 
 usage and training time.  If you are unsure what value to use, we recommend a value of <code>1/sqrt(n)</code>, where <code>n</code> is the number of training samples. Also you should consider
-the number of machines and memory you can use when setting rank_ratio.
+the number of machines and memory you can use when setting <code>rank_ratio</code>.
     </p>
     </li>
   </ul>
