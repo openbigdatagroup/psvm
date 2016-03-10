@@ -20,18 +20,21 @@
 
     <section class="main-content">
       <h1>Run With Docker</h1>
-      <ul>To simply test with mpi, we can use Docker containers to simulate parallel environment, just run:
+      <div>
+      <p>To simply test with mpi, we can simulate the parallel environment by running Docker with multiple containers.</p>
+      <p>Just run:</p>
 <pre><code>cd psvm/docker
 ./run_docker.sh 3   # build docker containers, Usage: ./run_docker.sh NODE_NUM
 ./run_psvm.sh 3 splice 0.1    # run psvm parallelly, USAGE: ./run_psvm NODE_NUM DATA_NAME RANK_RATIO
 ./clean_docker.sh 3   # clean docker containers, Usage: ./clean_docker.sh NODE_NUM</code></pre>
       <ul>
       <li> <code>NODE_NUM</code>: the number of mpi nodes, including master.</li>
-      <li> <code>DATA_NAME</code>: filename of the training data, filename of testing data should be DATA_NAME.t. Bothe training and testing data should be in the directory psvm/data.</li>
+      <li> <code>DATA_NAME</code>: filename of the training data, filename of testing data should be <strong>DATA_NAME</strong>.t. Both training and testing data should be under the directory <strong>psvm/data</strong>.</li>
       <li> <code>RANK_RATIO</code>: parameter for psvm, please refer to <a href="command_line.html">command-line flags</a>.</li>
-      <li> After run psvm, models are stored under psvm/models, and result file is under psvm directory.</li>
+      <li> After run psvm, models are stored under <strong>psvm/models</strong>, and result file is under <strong>psvm</strong> directory.</li>
       </ul>
-      </ul>
+
+      </div>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/obdg/psvm">PSVM</a> is maintained by <a href="https://github.com/obdg">obdg</a>.</span>

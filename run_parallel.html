@@ -21,16 +21,17 @@
     <section class="main-content">
       
 <h1> Run PSVM parallelly </h1>
-  <ul>
-  <li>Firstly, mpich3.2 must be setup successfully. Type <code>mpdtrace</code> on master to check how many machines we have.</li>
-  <li>Binaries(<code>svm_train</code>, <code>svm_predict</code>) must be located on a shared path 
+  <p>Please following the <a href="installation.html">installation instruction</a>, and setup the <a href="installation.html#cluster_setup">cluster env</a> as well. </p>
+  <p>Binaries(<code>svm_train</code>, <code>svm_predict</code>) must be located on a shared path 
 that each computer can access(The path name should be the same on all 
 computers). You should also prepare a model path which all machines can 
-access.</li>
-  <li>On master: run <code>mpiexec -n numberOfProcesses -f machinefile /PATH/svm_train ....</code>
-    <ul>
-      <li>Simple add <code>mpiexec -n numberOfProcesses -f machinefile</code> before original command
- line, then the program will run on parallel machines.</li>
+access.</p>
+  <h2>To Train</h2>
+  <p>On master, run </p>
+  <pre><code>mpiexec -n numberOfProcesses -f machinefile /PATH/svm_train ....</code></pre>
+    <p>Simple add <code>mpiexec -n numberOfProcesses -f machinefile</code> before original command
+line, then the program will run on parallel machines.</p>
+     <ul>
       <li><code>-n numberOfProcesses</code>: the number of processes specified for execution.</li>
       <li><code>-f machinefile</code>: list of machines in the cluster. This is a file with node names followed by a colon and a number of processes to spawn:</li>
 <pre><code>machine1:#process
@@ -41,12 +42,12 @@ machine3:#process
       Thus, we can assign how many processes we can start on each node. <code>numberOfProcesses</code> should not exceed the sum of <code>#process</code> on each line of the machine file.
       <li>After training, model.0, model.1 such things will be generated in the shared <code>model_path</code></li>
     </ul>
-  </li>
-  <li>On master: run <code>mpiexec -n numberOfProcesses -f machinefile /PATH/svm_predict ....</code></li>
+  <h2>To Predict</h2>
+  <p>On master: run </p>
+  <pre><code>mpiexec -n numberOfProcesses -f machinefile /PATH/svm_predict ....</code></pre>
     <ul>
       <li>Note: The number of processes used to predict MUST be the SAME as the number of machines used to train.</li>
     </ul>
-  </ul>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/obdg/psvm">PSVM</a> is maintained by <a href="https://github.com/obdg">obdg</a>.</span>
