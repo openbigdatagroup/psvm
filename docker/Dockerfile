@@ -1,4 +1,4 @@
-# plda docker example
+# PSVM docker example
 #
 # VERSION 0.1
 

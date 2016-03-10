@@ -4,7 +4,7 @@ http://books.nips.cc/papers/files/nips20/NIPS2007_0435.pdf. This is an all-kerne
 We migrate it from Google's large scale computing infrastructure to MPI, then every one can use and run it. Please notice this open source project is a 20% project (we do it in part time), and it is still in a Beta version. :)
 
 If you wish to publish any work based on psvm, please cite our paper as:
-Edward Chang, Kaihua Zhu, Hao Wang, Hongjie Bai, Jian Li, Zhihuan Qiu, and Hang Cui, PSVM: Parallelizing Support Vector Machines on Distributed Computers. NIPS 2007. Software available at http://code.google.com/p/psvm.
+Edward Chang, Kaihua Zhu, Hao Wang, Hongjie Bai, Jian Li, Zhihuan Qiu, and Hang Cui, PSVM: Parallelizing Support Vector Machines on Distributed Computers. NIPS 2007. Software available at https://github.com/obdg/psvm.
 
 The bibtex format is
 ```
@@ -13,7 +13,7 @@ The bibtex format is
   title =    {PSVM: Parallelizing Support Vector Machines on Distributed Computers},
   booktitle =    {NIPS},
   year =     {2007},
-  note = {Software available at \url{http://code.google.com/p/psvm}}
+  note = {Software available at \url{https://github.com/obdg/psvm}}
 }
 
 ```
